@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>The DOM Is a Tree</title>
+  </head>
+  <body>
+    <h1>The DOM Is a Tree</h1>
+
+    <h2>Learning Goals</h2>
+    <ul>
+      <li>Describe how the DOM works as a tree</li>
+      <li>Define the computer science version of "Tree"</li>
+      <li>Ask the DOM to find or "select" an HTML element or elements in the rendered page</li>
+    </ul>
+
+    <h2>Introduction</h2>
+    <p>
+      DOM programming is using JavaScript to:
+    </p>
+    <ol>
+      <li>Ask the DOM to find an HTML element or elements in the rendered page</li>
+      <li>Remove the selected element(s) or add a new element next to the selected element</li>
+      <li>Adjust a property of the selected element(s)</li>
+    </ol>
+    <p>
+      In previous lessons we were given the command to find the HTML element we wanted:
+    </p>
+    <pre><code>document.querySelector(selector);</code></pre>
+    <p>
+      The <em>selector</em> is like a query string that lets us find things within an HTML page. What is the syntax of this <em>selector</em>? How does the <em>selector</em> navigate through our document to find the DOM nodes that we want to work with (update, move, even delete!)?
+    </p>
+
+    <h2>Define the Computer Science Version of "Tree"</h2>
+    <p>
+      What do we mean when we say that the DOM is a tree? Trees make a good metaphor for the DOM because almost everyone has seen a tree. Starting at the bottom, you can climb up the tree and out to the farthest — and smallest — branches. The thicker a branch is, the stronger its connections are and the more it holds within it. Likewise, the thinner a branch is, the less it holds inside.
+    </p>
+    <p>
+      The DOM works basically the same way, except we usually talk about the root as being at the top of the DOM and the leaves being the most deeply nested HTML elements. So basically, we can imagine a tree upside down.
+    </p>
+    <p>
+      The HTML for this "tree" would be:
+    </p>
+    <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+  &lt;head&gt;
+    &lt;title&gt;My Title&lt;/title&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;h1&gt;A heading&lt;/h1&gt;
+    &lt;a href="http://example.com"&gt;Link text&lt;/a&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+    </code></pre>
+
+    <h2>Describe How the DOM Works as a Tree</h2>
+    <p>
+      Every tree can contain subtrees, which we can treat independently of their parent trees. They repeat the pattern and appearance of the full tree, despite being a smaller part of a tree, like branches. Every child has experienced this sense of wonder when they take a fallen branch and stick it in the ground and think that they've planted their own tree.
+    </p>
+    <p>
+      Practically speaking, the DOM begins at <code>&lt;html&gt;</code>, but for now we should avoid changing what's between the <code>&lt;head&gt;</code> tags. Most of the time, we will look at the DOM subtree with its root at <code>&lt;body&gt;</code> and only change things that will be visible on the page. We might also deal with subtrees. For example, if we have:
+    </p>
+    <pre><code>&lt;body&gt;
+  &lt;div&gt;
+    &lt;p&gt;Hi!&lt;/p&gt;
+  &lt;/div&gt;
+
+  &lt;div&gt;
+    &lt;p&gt;Bye!&lt;/p&gt;
+  &lt;/div&gt;
+&lt;/body&gt;
+    </code></pre>
+    <p>
+      Our tree looks like this:
+    </p>
+    <pre><code>        body
+        /  \
+      div   div
+      /      \
+     p        p
+    /          \
+ "Hi!"        "Bye!"
+    </code></pre>
+    <p>
+      Similarly, if we had a DOM subtree that looked like:
+    </p>
+    <pre><code>&lt;div&gt;
+  &lt;div&gt;
+    &lt;h1&gt;Hello!&lt;/h1&gt;
+  &lt;/div&gt;
+
+  &lt;div&gt;
+    &lt;h5&gt;Sup?&lt;/h5&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+    </code></pre>
+    <p>
+      The tree would look like:
+    </p>
+    <pre><code>         div
+        /  \
+      div   div
+      /      \
+    h1        h5
+    /          \
+ "Hello!"     "Sup?"
+    </code></pre>
+
+    <h2>Finding HTML Elements</h2>
+    <p>
+      In creating the HTML for a page, including <em>metadata</em> for a node (e.g., a <code>class</code> or <code>id</code> attribute) will not only provide useful information about that node but will also make it and its children easier to find. The more specific the metadata is, the more helpful it is for finding the desired element.
+    </p>
+    <p>
+      For the following exercises, you can experiment with any web page you like. It's fun to change <em>The New York Times</em> or Facebook.
+    </p>
+
+    <h3>Finding a Node</h3>
+    <p>
+      JavaScript exposes a few ways of finding DOM nodes, either directly or in stages, courtesy of the <code>document</code> object. We will introduce three here, in order from most to least specific: <code>getElementByID()</code>, <code>getElementsByClassName()</code>, and <code>getElementsByTagName()</code>.
+    </p>
+
+    <h4><code>document.getElementById()</code></h4>
+    <p>
+      This method provides the quickest access to a node, but it requires that we know a very specific piece of information — its <code>id</code>. This method can only return one element since CSS <code>id</code>s are expected to be unique.
+    </p>
+    <p>
+      Given the following DOM tree:
+    </p>
+    <pre><code>&lt;div&gt;
+  &lt;h5 id="greeting"&gt;Hello!&lt;/h5&gt;
+&lt;/div&gt;
+    </code></pre>
+    <p>
+      We could find the <code>h5</code> element with <code>document.getElementById('greeting')</code>.
+    </p>
+    <p>
+      Notice how the <code>id</code> that we pass to <code>getElementById</code> is identical to the <code>id</code> in <code>&lt;h5 id="greeting"&gt;</code>.
+    </p>
+    <p>
+      <strong>Note:</strong> You can use either single (<code>''</code>) or double (<code>""</code>) quotes around the <code>id</code> within the parentheses in <code>document.getElementById('yourIDGoesHere')</code>, as long as you use the same kind to open and close them!
+    </p>
+
+    <h4><code>document.getElementsByClassName()</code></h4>
+    <p>
+      This one is also very commonly used in DOM programming.
+    </p>
+    <p>
+      This method finds elements by their <code>className</code>. Unlike the previous method, class names do not need to be unique, so this method returns an <code>HTMLCollection</code> of all the elements with the given class. An <code>HTMLCollection</code> is an array-like structure containing a list of elements. You can iterate over an <code>HTMLCollection</code> with a simple <code>for</code> loop.
+    </p>
+    <p>
+      Given the following DOM tree:
+    </p>
+    <pre><code>&lt;!-- the `className` attribute is called `class` in HTML  --&gt;
+&lt;div&gt;
+  &lt;div class="banner"&gt;
+    &lt;h1&gt;Hello!&lt;/h1&gt;
+  &lt;/div&gt;
+
+  &lt;div class="banner"&gt;
+    &lt;h1&gt;Sup?&lt;/h1&gt;
+  &lt;/div&gt;
+
+  &lt;div class="banner"&gt;
+    &lt;h5&gt;Tinier heading&lt;/h5&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+    </code></pre>
+    <p>
+      We could find all of the elements with the class name "banner" by calling <code>document.getElementsByClassName('banner')</code>.
+    </p>
+
+    <h4><code>document.getElementsByTagName()</code></h4>
+    <p>
+      You can use this method if you <em>don't</em> know an element's <code>id</code> or <code>class</code>, but you <em>do</em> know its tag name (the tag name is the thing between the <code>&lt;&gt;</code>, e.g., <code>div</code>, <code>h1</code>, <code>header</code>, <code>article</code>, etc.). Since tag names aren't unique, this method also returns an <code>HTMLCollection</code>.
+    </p>
+
+    <h4>Finding a Node Without Knowing Anything About It</h4>
+    <p>
+      What if we don't have an <code>id</code> or <code>className</code> to help us find a particular element? This is where our knowledge of trees comes in handy!
+    </p>
+    <p>
+      Given the following DOM tree:
+    </p>
+    <pre><code>&lt;main&gt;
+  &lt;div&gt;
+    &lt;div&gt;
+      &lt;p&gt;Hello!&lt;/p&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+  &lt;div&gt;
+    &lt;div&gt;
+      &lt;h5&gt;Sup?&lt;/h5&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/main&gt;
+    </code></pre>
+    <p>
+      We could find the <code>&lt;h5&gt;</code> element by traversing the tree using <code>parentNode</code> and <code>childNodes</code>.
+    </p>
+    <pre><code>let main = document.getElementsByTagName('main')[0];
+let div = main.childNodes[3];
+let h5 = div.childNodes[1];
+    </code></pre>
+    <p>
+      In this example, we first select the <code>&lt;main&gt;</code> element using <code>getElementsByTagName('main')[0]</code> (the <code>[0]</code> is necessary because <code>getElementsByTagName</code> returns an <code>HTMLCollection</code>). Then, we access the third child node of the <code>&lt;main&gt;</code> element, which is the second <code>&lt;div&gt;</code> element. Finally, we access the second child node of that <code>&lt;div&gt;</code> element, which is the <code>&lt;h5&gt;</code> element we're looking for.
+    </p>
+    <p>
+      <strong>Note:</strong> The <code>childNodes</code> property returns a collection of all child nodes of the given element, including text nodes, comments, etc. If you only want element nodes, you can use the <code>children</code> property instead.
+    </p>
+
+    <h2>Conclusion</h2>
+    <p>
+      Understanding the DOM as a tree structure is crucial for manipulating HTML elements using JavaScript. By traversing the tree and using appropriate methods, such as <code>getElementById</code>, <code>getElementsByClassName</code>, and <code>getElementsByTagName</code>, you can efficiently select and manipulate specific elements within the DOM.
